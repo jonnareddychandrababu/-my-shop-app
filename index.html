@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shop App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f5f5f5; }
+        
+        /* Login Page */
+        .login-container { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #667eea, #764ba2); }
+        .login-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 350px; }
+        .login-box h2 { text-align: center; margin-bottom: 20px; color: #333; }
+        .login-box input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .login-box button { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .login-box button:hover { background: #5a6fd6; }
+        .error-msg { color: red; text-align: center; font-size: 13px; margin-top: 8px; }
+        
+        /* Navbar */
+        .navbar { background: #667eea; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { font-size: 22px; }
+        .navbar .cart-btn { background: white; color: #667eea; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .navbar .logout-btn { background: transparent; color: white; border: 1px solid white; padding: 8px 16px; border-radius: 20px; cursor: pointer; margin-left: 10px; }
+        
+        /* Products */
+        .shop-container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .welcome-msg { font-size: 18px; color: #555; margin-bottom: 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .product-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; }
+        .product-info { padding: 15px; }
+        .product-info h3 { color: #333; margin-bottom: 5px; }
+        .product-info .price { color: #667eea; font-size: 20px; font-weight: bold; }
+        .product-info button { width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .product-info button:hover { background: #5a6fd6; }
+        
+        /* Cart */
+        .cart-sidebar { position: fixed; right: -400px; top: 0; width: 380px; height: 100vh; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s; z-index: 100; padding: 20px; overflow-y: auto; }
+        .cart-sidebar.open { right: 0; }
+        .cart-sidebar h2 { margin-bottom: 20px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .cart-item .remove-btn { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .cart-total { font-size: 20px; font-weight: bold; margin-top: 20px; padding-top: 15px; border-top: 2px solid #333; }
+        .checkout-btn { width: 100%; padding: 14px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
+        .close-cart { background: none; border: none; font-size: 24px; cursor: pointer; float: right; }
+        
+        /* Payment Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .payment-modal { background: white; padding: 30px; border-radius: 12px; width: 400px; }
+        .payment-modal h2 { margin-bottom: 20px; }
+        .payment-modal input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .payment-modal .row { display: flex; gap: 10px; }
+        .payment-modal .row input { width: 50%; }
+        .pay-btn { width: 100%; padding: 14px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+        .cancel-btn { width: 100%; padding: 10px; background: #ccc; color: #333; border: none; border-radius: 8px; cursor: pointer; margin-top: 8px; }
+        .success-msg { text-align: center; color: #28a745; font-size: 18px; }
+        
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="login-container">
+    <div class="login-box">
+        <h2>🛍️ My Shop</h2>
+        <p style="text-align:center; color:#888; margin-bottom:15px;">Login to continue</p>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p id="errorMsg" class="error-msg hidden"></p>
+        <p style="text-align:center; margin-top:15px; font-size:12px; color:#999;">
+            Demo users: admin/admin123 • john/john123 • jane/jane123
+        </p>
+    </div>
+</div>
+
+<!-- SHOP PAGE -->
+<div id="shopPage" class="hidden">
+    <nav class="navbar">
+        <h1>🛍️ My Shop</h1>
+        <div>
+            <button class="cart-btn" onclick="toggleCart()">🛒 Cart (<span id="cartCount">0</span>)</button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+    
+    <div class="shop-container">
+        <p class="welcome-msg">Welcome, <span id="welcomeName"></span>! Browse our products below.</p>
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+    
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <button class="close-cart" onclick="toggleCart()">✕</button>
+        <h2>🛒 Your Cart</h2>
+        <div id="cartItems"></div>
+        <div class="cart-total">Total: $<span id="cartTotal">0.00</span></div>
+        <button class="checkout-btn" onclick="openPayment()">Proceed to Checkout</button>
+    </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal">
+    <div class="payment-modal">
+        <div id="paymentForm">
+            <h2>💳 Payment</h2>
+            <p style="color:#888; margin-bottom:15px;">Total: $<span id="paymentTotal">0.00</span></p>
+            <input type="text" placeholder="Cardholder Name" id="cardName">
+            <input type="text" placeholder="Card Number (use 4242 4242 4242 4242)" id="cardNumber" maxlength="19">
+            <div class="row">
+                <input type="text" placeholder="MM/YY" id="cardExpiry" maxlength="5">
+                <input type="text" placeholder="CVV" id="cardCvv" maxlength="3">
+            </div>
+            <button class="pay-btn" onclick="processPayment()">Pay Now</button>
+            <button class="cancel-btn" onclick="closePayment()">Cancel</button>
+        </div>
+        <div id="paymentSuccess" class="hidden">
+            <h2 style="text-align:center;">✅</h2>
+            <p class="success-msg">Payment Successful!</p>
+            <p style="text-align:center; color:#888; margin-top:10px;">Thank you for your purchase.</p>
+            <button class="cancel-btn" onclick="closePayment()" style="margin-top:15px;">Continue Shopping</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sample Users
+    const users = [
+        { username: 'admin', password: 'admin123', name: 'Admin User' },
+        { username: 'john', password: 'john123', name: 'John Doe' },
+        { username: 'jane', password: 'jane123', name: 'Jane Smith' }
+    ];
+
+    // Sample Products
+    const products = [
+        { id: 1, name: 'Wireless Headphones', price: 79.99, image: 'https://picsum.photos/300/200?random=1' },
+        { id: 2, name: 'Smart Watch', price: 199.99, image: 'https://picsum.photos/300/200?random=2' },
+        { id: 3, name: 'Laptop Stand', price: 49.99, image: 'https://picsum.photos/300/200?random=3' },
+        { id: 4, name: 'Bluetooth Speaker', price: 59.99, image: 'https://picsum.photos/300/200?random=4' },
+        { id: 5, name: 'USB-C Hub', price: 39.99, image: 'https://picsum.photos/300/200?random=5' },
+        { id: 6, name: 'Mechanical Keyboard', price: 129.99, image: 'https://picsum.photos/300/200?random=6' },
+        { id: 7, name: 'Webcam HD', price: 69.99, image: 'https://picsum.photos/300/200?random=7' },
+        { id: 8, name: 'Mouse Pad XL', price: 24.99, image: 'https://picsum.photos/300/200?random=8' }
+    ];
+
+    let cart = [];
+    let currentUser = null;
+
+    // Login
+    function login() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const user = users.find(u => u.username === username && u.password === password);
+        
+        if (user) {
+            currentUser = user;
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('shopPage').classList.remove('hidden');
+            document.getElementById('welcomeName').textContent = user.name;
+            renderProducts();
+        } else {
+            document.getElementById('errorMsg').textContent = 'Invalid username or password!';
+            document.getElementById('errorMsg').classList.remove('hidden');
+        }
+    }
+
+    // Logout
+    function logout() {
+        currentUser = null;
+        cart = [];
+        document.getElementById('shopPage').classList.add('hidden');
+        document.getElementById('loginPage').classList.remove('hidden');
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('errorMsg').classList.add('hidden');
+    }
+
+    // Render Products
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = products.map(p => `
+            <div class="product-card">
+                <img src="${p.image}" alt="${p.name}">
+                <div class="product-info">
+                    <h3>${p.name}</h3>
+                    <p class="price">$${p.price.toFixed(2)}</p>
+                    <button onclick="addToCart(${p.id})">Add to Cart</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Cart Functions
+    function addToCart(productId) {
+        const product = products.find(p => p.id === productId);
+        const existing = cart.find(item => item.id === productId);
+        if (existing) {
+            existing.qty++;
+        } else {
+            cart.push({ ...product, qty: 1 });
+        }
+        updateCart();
+    }
+
+    function removeFromCart(productId) {
+        cart = cart.filter(item => item.id !== productId);
+        updateCart();
+    }
+
+    function updateCart() {
+        const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        
+        document.getElementById('cartCount').textContent = totalItems;
+        document.getElementById('cartTotal').textContent = totalPrice.toFixed(2);
+        
+        const cartItemsDiv = document.getElementById('cartItems');
+        cartItemsDiv.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <div>
+                    <strong>${item.name}</strong><br>
+                    <small>$${item.price.toFixed(2)} x ${item.qty}</small>
+                </div>
+                <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+            </div>
+        `).join('');
+    }
+
+    function toggleCart() {
+        document.getElementById('cartSidebar').classList.toggle('open');
+    }
+
+    // Payment Functions
+    function openPayment() {
+        if (cart.length === 0) { alert('Your cart is empty!'); return; }
+        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        document.getElementById('paymentTotal').textContent = total.toFixed(2);
+        document.getElementById('paymentForm').classList.remove('hidden');
+        document.getElementById('paymentSuccess').classList.add('hidden');
+        document.getElementById('paymentModal').classList.add('active');
+    }
+
+    function closePayment() {
+        document.getElementById('paymentModal').classList.remove('active');
+    }
+
+    function processPayment() {
+        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        const cardName = document.getElementById('cardName').value;
+        const expiry = document.getElementById('cardExpiry').value;
+        const cvv = document.getElementById('cardCvv').value;
+
+        if (!cardName || !cardNumber || !expiry || !cvv) {
+            alert('Please fill in all payment fields!');
+            return;
+        }
+
+        if (cardNumber === '4242424242424242') {
+            document.getElementById('paymentForm').classList.add('hidden');
+            document.getElementById('paymentSuccess').classList.remove('hidden');
+            cart = [];
+            updateCart();
+            toggleCart();
+        } else {
+            alert('Payment failed! Use test card: 4242 4242 4242 4242');
+        }
+    }
+
+    // Enter key to login
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') login();
+    });
+</script>
+
+</body>
+</html>
