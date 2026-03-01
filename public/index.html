@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🙏 Lord Ganesha — Images & Mantras</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Sans+Devanagari:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="om-symbol">ॐ</div>
+    <h1 class="site-title">Lord Ganesha</h1>
+    <p class="site-subtitle">Vighnaharta · Remover of Obstacles · God of New Beginnings</p>
+    <div class="header-divider"></div>
+  </header>
+
+  <!-- ─── Main ────────────────────────────────────────────── -->
+  <main>
+
+    <!-- Gallery Section -->
+    <section class="section" id="gallery">
+      <h2 class="section-title">Sacred Gallery</h2>
+
+      <div class="gallery-wrapper">
+        <button id="btn-prev" class="nav-btn nav-btn--left" aria-label="Previous image">&#10094;</button>
+
+        <div class="gallery-container">
+          <div id="gallery-track" class="gallery-track"></div>
+        </div>
+
+        <button id="btn-next" class="nav-btn nav-btn--right" aria-label="Next image">&#10095;</button>
+      </div>
+
+      <div class="gallery-footer">
+        <div id="gallery-dots" class="dots"></div>
+        <span id="image-counter" class="image-counter">1 / 5</span>
+      </div>
+    </section>
+
+    <!-- Mantras Section -->
+    <section class="section" id="mantras-section">
+      <h2 class="section-title">Sacred Mantras</h2>
+      <p class="section-intro">
+        Chanting these mantras with devotion invites Ganesha's grace, wisdom, and the removal of all obstacles.
+      </p>
+
+      <div id="mantra-card" class="mantra-card">
+        <span id="mantra-type" class="mantra-type"></span>
+
+        <p id="mantra-sanskrit" class="mantra-sanskrit"></p>
+        <p id="mantra-transliteration" class="mantra-transliteration"></p>
+
+        <div class="mantra-divider"></div>
+
+        <p id="mantra-meaning" class="mantra-meaning"></p>
+      </div>
+
+      <div class="mantra-controls">
+        <button id="btn-mantra-prev" class="mantra-btn" aria-label="Previous mantra">&#9664; Prev</button>
+        <span id="mantra-counter" class="mantra-counter">1 / 5</span>
+        <button id="btn-mantra-next" class="mantra-btn" aria-label="Next mantra">Next &#9654;</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer ──────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>🙏 <em>Ganapati Bappa Morya &bull; Mangalamurti Morya</em> 🙏</p>
+    <p class="footer-note">Images courtesy of Wikimedia Commons (Public Domain)</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
